@@ -1,0 +1,164 @@
+<!-- 
+Author : Mangesh Mahajan
+Tech or Keywords : HTML,CSS,Bootstrap,Jquery,Fabric JS
+Description : 
+      Existing : How to Space Evenly between objects horizontally and Vertically on canvas with fabricJS? 
+      Proposed : Able to space up evenly between objects horizontally and vertically on canvas with Fabric JS.
+Basic reference : https://stackoverflow.com/questions/59404169/
+-->
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Fabric JS | Distribute object</title>
+    <style>    
+      canvas {
+      /*border: 1px solid #999;*/
+    }
+    body{
+        padding: 20px;        
+      }
+      .container-fluid
+      {
+        border: 1px solid black;
+      }
+  </style>
+</head>
+<body>
+
+    <div class="container-fluid">   
+    <h1><center>Fabric JS : Transform object Horizontally and Vertically.</center></h1>
+     <canvas id="c" width="1000" height="500"></canvas> 
+      <button type="button" style="float: left;" class="btn btn-secondary" onclick="distribute('horizontal')">Transform Horizontal</button>
+      <button type="button" style="float: right;" class="btn btn-success" onclick="distribute('vertical')">Transform Vertical</button>
+    
+      <h3><center> select any  least 2 shapes and transfrom the objects </center> </h3>    
+    </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.5.0/fabric.min.js"></script>
+  <script>
+    fabric.Object.prototype.originX = 'center';
+    fabric.Object.prototype.originY = 'center';
+
+    const canvas = (window._canvas = new fabric.Canvas('c'));
+
+    const circle1 = new fabric.Circle({
+      radius: 30,
+      fill: 'red',
+      left: 100,
+      top: 100
+    });
+
+    const circle2 = new fabric.Circle({
+      radius: 40,
+      fill: 'green',
+      left: 250,
+      top: 150
+
+    });
+
+    const circle3 = new fabric.Circle({
+      radius: 30,
+      fill: 'blue',
+      left: 500,
+      top: 250
+    });
+
+
+    const triangle = new fabric.Triangle({
+      left: 350,
+      top: 200,
+      width: 70,
+      height: 70,
+      fill: 'red'
+    });
+
+    const rect = new fabric.Rect({
+      left: 230,
+      top: 300,
+      width: 70,
+      height: 70,
+      fill: 'green',
+    });
+
+
+
+    canvas.add(circle1);
+    canvas.add(circle2);
+    canvas.add(circle3);
+    canvas.add(triangle);
+    canvas.add(rect);
+
+
+
+
+    function distribute(transform) {
+      const group = canvas.getActiveObject();
+      const items = canvas.getActiveObject()._objects,
+        newDim = getNewViewDimensions(group, transform);
+      group.set({});
+      for (let i = 0; i < items.length; i++) {
+        if (i == 0) {
+          if(transform == 'horizontal')
+          {
+            items[i].set({ left: -group.width / 2 + 0, top: -group.height / 2 + 0, originX: 'left', originY: 'top', });
+          }
+          else
+          {
+            items[i].set({left: -group.width / 2 + 0,top: -group.height / 2 + 0});
+          }
+        }
+        else
+        {
+            if(transform == 'horizontal')
+            {
+               items[i].set({ left: items[i - 1].left + 100, top: items[i - 1].top, originX: 'left', originY: 'top', });
+            }
+            else
+            {
+              items[i].set({left: items[i - 1].left,top: items[i - 1].top + items[i - 1].height + 20});
+            }
+        }
+      }
+      canvas.renderAll();
+    }
+
+   function getNewViewDimensions(group, val) {
+      let objects = canvas.getActiveObject()._objects,
+        minWidth = 0,
+        minHeight = 0,
+        w, h;
+      switch (val) {
+        case 'vertical':
+          for (let i = 0; i < objects.length; i++) {
+            minWidth += objects[i].width * objects[i].scaleX;
+            h = objects[i].height * objects[i].scaleY;
+            if (h > minHeight) {
+              minHeight = h;
+            }
+          }
+          break;
+        case 'horizontal':
+          for (let i = 0; i < objects.length; i++) {
+            minHeight += objects[i].height * objects[i].scaleY;
+            w = objects[i].width * objects[i].scaleX;
+            if (w > minWidth) {
+              minWidth = w;
+            }
+          }
+          break;
+      }
+      return {
+        width: minWidth,
+        height: minHeight,
+      };
+    }
+  </script>
+</body>
+
+</html>
